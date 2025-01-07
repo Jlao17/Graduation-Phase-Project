@@ -1,0 +1,2 @@
+# Repository for Graduation Phase Project: Automatic Tracing of Release-Log to Code Changes​
+Code based on the paper ``EALink: An Efficient and Accurate Pre-trained Framework for Issue-Commit Link Recovery``.
