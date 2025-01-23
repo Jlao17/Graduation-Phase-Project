@@ -1,11 +1,10 @@
 import csv
-import re
 import pandas as pd
 from tree_sitter import Language, Parser
 import tree_sitter_java as tsjava
 import preprocessor
-from extract_commit_version import get_fix_versions_from_jira
 import ast
+import re
 
 # Increase CSV field size limit to handle large data
 csv.field_size_limit(500 * 1024 * 1024)
@@ -15,31 +14,27 @@ lang = "java"
 LANGUAGE = Language(tsjava.language())
 parser = Parser(LANGUAGE)
 
-repo = "NETBEANS"
+repo = "HADOOP"
 # Initialize an empty list to store processed data
 process = []
-# Cloned repo path for fetching commit messages
-cloned_repo_path = f"C:/Users/Jason/Desktop/{repo.lower()} repo/{repo.lower()}"
 # Load the CSV file containing the dataset
-dummy_link = pd.read_csv(f"../data/OriginalData/{repo.lower()}_link_raw.csv")
+dummy_link = pd.read_csv(f"../data/OriginalData/Hadoop/{repo.lower()}_link_raw_merged.csv")
 
 # Rename the column "commitid" to "hash"
 dummy_link.rename(columns={"commitid": "hash"}, inplace=True)
 
-def extract_tracking_id(message):
-    match = re.search(rf"\[{repo}-\d+\]", message)
-    if match:
-        tracking_id = match.group()
-        clean_message = re.sub(rf"\[{repo}-\d+\]\s*", "", message)
-        return pd.Series([str(tracking_id), clean_message, message])
-    else:
-        return pd.Series([None, message, message])
-
-dummy_link[["tracking_id", "message", "old_message"]] = dummy_link["message"].apply(extract_tracking_id)
+def remove_tracking_id(row):
+    tracking_id = row['tracking_id']
+    text = row['message']
+    # Remove tracking_id from text if it exists
+    return re.sub(rf'\b{re.escape(tracking_id)}\b', '', text).strip()
+# Apply the function to remove tracking_id from text
+dummy_link['message'] = dummy_link.apply(remove_tracking_id, axis=1)
 
 # # Iterate through each row in the dataset
 for index, row in dummy_link.iterrows():
     # Preprocess the summary, description, and commit message
+
     summary_processed = preprocessor.preprocessNoCamel(str(row["summary"]).strip("[]"))
     description_processed = preprocessor.preprocessNoCamel(str(row["description"]).strip("[]"))
     message_processed = preprocessor.preprocessNoCamel(str(row["message"]).strip("[]"))
@@ -57,8 +52,6 @@ for index, row in dummy_link.iterrows():
     for code in clist:
         codelist_processed.append(preprocessor.extract_codetoken(code, parser, lang))
 
-    # Fetch the fix version for the current commit hash using the `get_fix_versions_from_jira` function
-    fix_version = get_fix_versions_from_jira(cloned_repo_path, row["hash"], row["old_message"], repo)
     # Combine summary, description, and comment to process issue code
     issue_text = str(row["summary"]) + str(row["description"]) + str(row["comment"])
     issuecode = preprocessor.getIssueCode(issue_text)
@@ -67,10 +60,10 @@ for index, row in dummy_link.iterrows():
     list1 = [
         row["source"], row["product"], row["issue_id"], row["component"],
         row["create_date"], row["update_date"], row["last_resolved_date"], summary_processed,
-        description_processed, issuecode, row["issue_type"], row["status"], row["repo"], row["hash"], fix_version,
+        description_processed, issuecode, row["issue_type"], row["status"], row["repo"], row["hash"], row["fix_version"],
         row["parents"], row["author"], row["committer"], row["author_time_date"], row["commit_time_date"], row["tracking_id"],
         message_processed, row["commit_issue_id"], changed_files, None, codelist_processed, row["label"],
-        row["train_flag"]
+        row["train_flag"], row["release_notes_original"], row["release_notes"]
     ]
 
     # Append the processed row to the process list
@@ -84,11 +77,11 @@ columns = [
     "last_resolved_date", "summary_processed", "description_processed", "issuecode", "issue_type",
     "status", "repo", "hash", "fix_version", "parents", "author", "committer", "author_time_date", "commit_time_date",
     "tracking_id", "message_processed", "commit_issue_id", "changed_files", "Diff_processed", "codelist_processed",
-    "label", "train_flag"
+    "label", "train_flag", "release_notes_original", "release_notes"
 ]
 
 # Create a DataFrame from the processed data
 df = pd.DataFrame(process, columns=columns)
 
-# Write the DataFrame to a CSV file
-df.to_csv(f"../data/Processed{repo.title()}/1_{repo.lower()}_process.csv", index=False)
+# Release notes already added during scraping, so output is saved to 1.5_ instead of 1_ file
+df.to_csv(f"../data/Processed{repo.title()}/1.5_{repo.lower()}_process.csv", index=False)

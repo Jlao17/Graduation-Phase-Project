@@ -30,16 +30,16 @@ def get_title_from_github(repo_name, commit_hash):
         raise Exception(f"Error fetching commit from GitHub: {response.status_code}, {response.text}")
 
 
-def extract_jira_issue_key(commit_message):
-    jira_issue_pattern = re.compile(r'(ISIS-\d+)')
+def extract_jira_issue_key(commit_message, repo):
+    jira_issue_pattern = re.compile(rf"{repo}-\d+")
     match = jira_issue_pattern.search(commit_message)
     if match:
-        return match.group(1)
+        return match.group(0)
     else:
         raise ValueError("No JIRA issue key found in the commit message")
 
 
-def get_fix_versions_from_jira(repo_name, hash, commit_message):
+def get_fix_versions_from_jira(repo_name, hash, commit_message, repo):
     # if cloned:
     #     commit_message = get_title_from_cloned_repo(repo_name, hash)
     # else:
@@ -48,7 +48,7 @@ def get_fix_versions_from_jira(repo_name, hash, commit_message):
     # if commit_message == "nan":
     #     return []
     try:
-        issue_key = extract_jira_issue_key(commit_message)
+        issue_key = extract_jira_issue_key(commit_message, repo)
     except ValueError as e:
         print(f"Error: {e}")
         issue_key = "nan"

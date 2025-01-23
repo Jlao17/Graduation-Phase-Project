@@ -48,7 +48,7 @@ def get_release_notes(url, name):
     df = pd.DataFrame(data)
     df["content"].tolist()
     # Save the DataFrame to a CSV file
-    df.to_csv(f"../data/ReleaseNotes//Isis/release_notes_{name}.csv", index=False)
+    df.to_csv(f"../../data/ReleaseNotes/Isis/release_notes_{name}.csv", index=False)
     print(f"Data saved to 'release_notes_{name}.csv'")
 
 

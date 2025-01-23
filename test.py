@@ -1,58 +1,57 @@
 import ast
 from typing import Any
+
+from sklearn.metrics import precision_score, recall_score, f1_score, \
+    roc_auc_score, matthews_corrcoef, brier_score_loss, confusion_matrix
 from transformers import AutoModelForMaskedLM, BertForMaskedLM, RobertaModel, RobertaConfig, AutoModel
 import pickle
 import torch
 import pandas as pd
 import sys
-import csv
-import pandas as pd
-import numpy as np
+import requests
+from bs4 import BeautifulSoup
+import regex as re
+from constants import GITHUB_TOKEN
+import time
+import glob
+import os
 maxInt = sys.maxsize
-
 import subprocess
+import numpy as np
+import random
 
-def get_title_from_cloned_repo(repo_path, commit_hash):
-    """
-    Get the commit message (title) for a given commit hash from a cloned repository.
+# # combine all csv files in the folder
+# input_folder = "data/OriginalData/Hadoop"
+# input_files_pattern = "hadoop_link_raw*.csv"  # This matches all CSV files with the specified pattern
+# output_file = "data/OriginalData/Hadoop/hadoop_link_raw_merged.csv"  # Output file where the merged data will be saved
+# def append_csv_files(input_folder, input_files_pattern, output_file):
+#     # Create the full path pattern for CSV files
+#     input_pattern = os.path.join(input_folder, input_files_pattern)
+#
+#     # Get a list of all CSV files matching the pattern
+#     csv_files = glob.glob(input_pattern)
+#
+#     # Read and append each file to a list
+#     df_list = []
+#     for file in csv_files:
+#         df = pd.read_csv(file)
+#         df_list.append(df)
+#
+#     # Concatenate all dataframes into one
+#     final_df = pd.concat(df_list, ignore_index=True)
+#
+#     # Save the final concatenated dataframe to the output file
+#     final_df.to_csv(output_file, index=False)
+#     print(f"All files appended successfully into {output_file}")
 
-    :param repo_path: Path to the local cloned repository
-    :param commit_hash: The hash of the commit
-    :return: Commit message (title)
-    """
-    try:
-        # Run the git show command to extract the commit message
-        result = subprocess.run(
-            ["git", "-C", repo_path, "show", "--quiet", "--pretty=format:%B", commit_hash],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        if result.returncode == 0:
-            return result.stdout  # The commit message
-        else:
-            raise Exception(f"Error: {result.stderr}")
-    except Exception as e:
-        raise Exception(f"An error occurred: {e}")
+# Load your data
+df = pd.read_csv("data/ProcessedHadoop/2.5_hadoop_link_false_rn.csv")
+df['train_flag'] = 1
 
+# Ensure reproducibility
+np.random.seed(23012025)
 
-# function to find row with hash
-def find_row_with_hash(df, hash):
-    return df.loc[df['commitid'] == hash]
-
-# Example usage
-# repo_path = "C:/Users/Jason/Desktop/isis repo/causeway"  # Update with the path to your cloned repo
-# commit_hash = "dc1bb3d74ff3f769ff5b00c3a47c1d74e2bdba3f"  # Replace with your desired commit hash
-# subprocess.run(["git", "-C", repo_path, "fetch", "--all"])
-# try:
-#     title = get_title_from_cloned_repo(repo_path, commit_hash)
-#     print(f"Commit Title: {title}")
-# except Exception as e:
-#     print(f"Failed to get commit title: {e}")
-
-# row = find_row_with_hash(pd.read_csv("./data/OriginalData/isis_link_raw.csv"), "c9e5343516f4dd96e5487b3aa2f92c8f3e654edd")
-# print(row["message"])
-df = pd.read_csv("./data/ProcessedIsis/1_isis_process.csv")
-
-# print all unique values in df["fix_version"]
-print(df["fix_version"].unique())
+# Assign train_flag: 80% for training and 20% for testing
+df['train_flag'] = np.random.choice([1, 0], size=len(df), p=[0.8, 0.2])
+print(df['train_flag'].value_counts())
+df.to_csv("data/ProcessedHadoop/2.5_hadoop_link_false_rn.csv", index=False)
