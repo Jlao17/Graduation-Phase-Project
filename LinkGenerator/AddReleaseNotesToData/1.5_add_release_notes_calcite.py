@@ -6,7 +6,7 @@ import re
 
 # Load data
 repo = "CALCITE"
-df = pd.read_csv(f"../data/Processed{repo.title()}/1_{repo.lower()}_process.csv")
+df = pd.read_csv(f"../../data/Processed{repo.title()}/1_{repo.lower()}_process.csv")
 calcite_release_notes = pd.read_csv("../../data/ReleaseNotes/Calcite/release_notes_calcite.csv")
 avatica_release_notes = pd.read_csv("../../data/ReleaseNotes/Calcite/release_notes_calcite_avatica.csv")
 avatica_go_release_notes = pd.read_csv("../../data/ReleaseNotes/Calcite/release_notes_calcite_avatica_go.csv")
@@ -76,4 +76,4 @@ if __name__ == "__main__":
     expanded_df = pd.DataFrame(expanded_rows)
 
     # Save the expanded DataFrame
-    expanded_df.to_csv(f"../data/Processed{repo.title()}/1.5_{repo.lower()}_process_notes_cleaned.csv", index=False)
+    expanded_df.to_csv(f"../../data/Processed{repo.title()}/1.5_{repo.lower()}_process_notes_cleaned.csv", index=False)

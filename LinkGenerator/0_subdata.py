@@ -6,12 +6,12 @@ import pandas as pd
 import preprocessor
 
 
-repo = "CALCITE"
+repo = "HADOOP"
 # from tkinter import _flatten
 csv.field_size_limit(500 * 1024 * 1024)
 
 newlist = []
-dummy_link = pd.read_csv(f"../data/OriginalData/{repo.lower()}_link_raw.csv")
+dummy_link = pd.read_csv(f"../data/OriginalData/Hadoop/{repo.lower()}_link_raw_merged.csv")
 for index, row in dummy_link.iterrows():
     Diff_processed = []
     difflist = eval(row["Diff"])

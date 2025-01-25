@@ -1,8 +1,8 @@
 import pandas as pd
 from numpy import nan as NaN
 
-repo = "HADOOP"
-df1 = pd.read_csv(f"../data/Processed{repo.title()}/1.5_{repo.lower()}_process.csv")
+repo = "CALCITE"
+df1 = pd.read_csv(f"../data/Processed{repo.title()}/1.5_{repo.lower()}_process_notes_cleaned.csv")
 df2 = pd.read_csv(f"../data/Processed{repo.title()}/0_{repo.lower()}_sub.csv")
 list1 = ["issue_id", "summary_processed", "description_processed", "issuecode", "hash", "fix_version", "tracking_id",
          "message_processed", "changed_files", "codelist_processed", "label", "train_flag", "release_notes"]

@@ -2,7 +2,7 @@ import pandas as pd
 import random
 
 repo = "HADOOP"
-df = pd.read_csv(f"../data/Processed{repo.title()}/2.4_{repo.lower()}_link_false.csv")
+df = pd.read_csv(f"../data/Processed{repo.title()}/2_{repo.lower()}_link_merged.csv")
 
 df["target_rn"] = 1
 

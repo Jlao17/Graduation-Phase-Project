@@ -38,20 +38,8 @@ for index, row in dummy_link.iterrows():
     summary_processed = preprocessor.preprocessNoCamel(str(row["summary"]).strip("[]"))
     description_processed = preprocessor.preprocessNoCamel(str(row["description"]).strip("[]"))
     message_processed = preprocessor.preprocessNoCamel(str(row["message"]).strip("[]"))
-
-    # Process the changed files
     changed_files = []
-    cf = ast.literal_eval(row["changed_files"])  # Convert string representation to list safely
-    for f in cf:
-        f_name = f.split("/")[-1]  # Correctly split by a forward slash
-        changed_files.append(f_name)
-
-    # Process the codelist using the parser
-    clist = eval(row["codelist"])
     codelist_processed = []
-    for code in clist:
-        codelist_processed.append(preprocessor.extract_codetoken(code, parser, lang))
-
     # Combine summary, description, and comment to process issue code
     issue_text = str(row["summary"]) + str(row["description"]) + str(row["comment"])
     issuecode = preprocessor.getIssueCode(issue_text)

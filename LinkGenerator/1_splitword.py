@@ -6,7 +6,7 @@ import tree_sitter_java as tsjava
 import preprocessor
 from extract_commit_version import get_fix_versions_from_jira
 import ast
-
+import requests
 # Increase CSV field size limit to handle large data
 csv.field_size_limit(500 * 1024 * 1024)
 
@@ -15,27 +15,34 @@ lang = "java"
 LANGUAGE = Language(tsjava.language())
 parser = Parser(LANGUAGE)
 
-repo = "NETBEANS"
+repo = "CALCITE"
 # Initialize an empty list to store processed data
 process = []
 # Cloned repo path for fetching commit messages
 cloned_repo_path = f"C:/Users/Jason/Desktop/{repo.lower()} repo/{repo.lower()}"
 # Load the CSV file containing the dataset
 dummy_link = pd.read_csv(f"../data/OriginalData/{repo.lower()}_link_raw.csv")
+JIRA_API = "https://issues.apache.org/jira/rest/api/2/issue/"
 
 # Rename the column "commitid" to "hash"
 dummy_link.rename(columns={"commitid": "hash"}, inplace=True)
 
-def extract_tracking_id(message):
-    match = re.search(rf"\[{repo}-\d+\]", message)
-    if match:
-        tracking_id = match.group()
-        clean_message = re.sub(rf"\[{repo}-\d+\]\s*", "", message)
+def extract_tracking_id(issue_id, message):
+    # Fetch the tracking ID from the issue ID
+    url = f"{JIRA_API}/{issue_id}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        tracking_id = data["key"]
+        clean_message = re.sub(rf"\[{repo}-\d+]\s*", "", message)
         return pd.Series([str(tracking_id), clean_message, message])
     else:
         return pd.Series([None, message, message])
 
-dummy_link[["tracking_id", "message", "old_message"]] = dummy_link["message"].apply(extract_tracking_id)
+dummy_link[["tracking_id", "message", "old_message"]] = dummy_link.apply(
+    lambda row: extract_tracking_id(row["issue_id"], row["message"]),
+    axis=1
+)
 
 # # Iterate through each row in the dataset
 for index, row in dummy_link.iterrows():
