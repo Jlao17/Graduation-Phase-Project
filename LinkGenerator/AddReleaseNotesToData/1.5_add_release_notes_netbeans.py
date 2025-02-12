@@ -6,7 +6,7 @@ import re
 
 # Load data
 repo = "NETBEANS"
-df = pd.read_csv(f"../data/Processed{repo.title()}/1_{repo.lower()}_process.csv")
+df = pd.read_csv(f"../../data/Processed{repo.title()}/1_{repo.lower()}_process.csv")
 netbeans_release_notes = pd.read_csv("../../data/ReleaseNotes/Netbeans/release_notes_netbeans.csv")
 
 df["tracking_id"] = df["tracking_id"].astype(str)
@@ -65,4 +65,4 @@ if __name__ == "__main__":
     expanded_df = pd.DataFrame(expanded_rows)
 
     # Save the expanded DataFrame
-    expanded_df.to_csv(f"../data/Processed{repo.title()}/1.5_{repo.lower()}_process_notes_cleaned.csv", index=False)
+    expanded_df.to_csv(f"../../data/Processed{repo.title()}/1.5_{repo.lower()}_process_notes_cleaned.csv", index=False)

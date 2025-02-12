@@ -7,6 +7,8 @@ import preprocessor
 from extract_commit_version import get_fix_versions_from_jira
 import ast
 import requests
+from tqdm import tqdm
+
 # Increase CSV field size limit to handle large data
 csv.field_size_limit(500 * 1024 * 1024)
 
@@ -15,7 +17,7 @@ lang = "java"
 LANGUAGE = Language(tsjava.language())
 parser = Parser(LANGUAGE)
 
-repo = "CALCITE"
+repo = "ISIS"
 # Initialize an empty list to store processed data
 process = []
 # Cloned repo path for fetching commit messages
@@ -26,6 +28,7 @@ JIRA_API = "https://issues.apache.org/jira/rest/api/2/issue/"
 
 # Rename the column "commitid" to "hash"
 dummy_link.rename(columns={"commitid": "hash"}, inplace=True)
+tqdm.pandas()
 
 def extract_tracking_id(issue_id, message):
     # Fetch the tracking ID from the issue ID
@@ -39,10 +42,13 @@ def extract_tracking_id(issue_id, message):
     else:
         return pd.Series([None, message, message])
 
-dummy_link[["tracking_id", "message", "old_message"]] = dummy_link.apply(
-    lambda row: extract_tracking_id(row["issue_id"], row["message"]),
-    axis=1
-)
+# if tracking_id column exists, skip this step
+if "tracking_id" not in dummy_link.columns:
+    dummy_link[["tracking_id", "message", "old_message"]] = dummy_link.progress_apply(
+        lambda row: extract_tracking_id(row["issue_id"], row["message"]),
+        axis=1
+    )
+
 
 # # Iterate through each row in the dataset
 for index, row in dummy_link.iterrows():

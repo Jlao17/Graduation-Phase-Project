@@ -6,7 +6,8 @@ import re
 
 # Load data
 repo = "ISIS"
-df = pd.read_csv(f"../data/Processed{repo.title()}/1_{repo.lower()}_process.csv")
+new_repo = "CAUSEWAY"
+df = pd.read_csv(f"../../data/Processed{repo.title()}/1_{repo.lower()}_process.csv")
 isis_release_notes = pd.read_csv("../../data/ReleaseNotes/Isis/release_notes_isis_merged.csv")
 
 df["tracking_id"] = df["tracking_id"].astype(str)
@@ -55,7 +56,7 @@ if __name__ == "__main__":
             # new_row["tracking_id"] = new_row["tracking_id"].strip("[]")
             for note in release_note_list:
                 if new_row["tracking_id"] in note:
-                    pattern = rf"\b{repo}-\d+\b"
+                    pattern = rf"\b{new_repo}-\d+\b"
                     cleaned_release_notes = re.sub(pattern, "", note)
                     release_notes_processed_cleaned = preprocessor.preprocessNoCamel(str(cleaned_release_notes).strip("[]"))
                     new_row["release_notes_original"] = note
@@ -67,4 +68,4 @@ if __name__ == "__main__":
     expanded_df = pd.DataFrame(expanded_rows)
 
     # Save the expanded DataFrame
-    expanded_df.to_csv(f"../data/Processed{repo.title()}/1.5_{repo.lower()}_process_notes_cleaned.csv", index=False)
+    expanded_df.to_csv(f"../../data/Processed{repo.title()}/1.5_{repo.lower()}_process_notes_cleaned.csv", index=False)

@@ -9,14 +9,15 @@ import nltk.data
 import nltk.stem
 from nltk.stem import WordNetLemmatizer
 # from nltk.tokenize import RegexpTokenizer
-from nltk.tokenize import WordPunctTokenizer
+from nltk.tokenize import WordPunctTokenizer, word_tokenize
 # import chardet   #需要导入这个模块，检测编码格式
 from tree_sitter import Language, Parser
 import tree_sitter_python as tspython
 # from keras.preprocessing.text import Tokenizer
-from parser_lang import (tree_to_token_index,
+from LinkGenerator.parser_lang import (tree_to_token_index,
                          index_to_code_token)
 import tree_sitter_java as tsjava
+from nltk.corpus import stopwords
 
 nltk.download('punkt_tab')
 nltk.download('wordnet')
@@ -249,7 +250,8 @@ methodInvocationCase = re.compile(r'([A-Za-z0-9_]+\.[A-Za-z0-9_]+)')
 LINK_TAG = 'rhlinkrh'
 CODE_TAG = 'rhcoderh'
 
-#驼峰
+stop_words = set(stopwords.words('english'))
+
 def split_camel(camel_str,test=''):
     try:
         split_str = re.sub(
@@ -278,7 +280,7 @@ def index_to_code_token(index, code):
             s += code[i]
         s += code[end_point[0]][:end_point[1]]
     return s
-#去掉列表的空元素
+
 def not_empty(s):
     return s and s.strip()
 
@@ -354,24 +356,56 @@ def preprocessBad(paragraph):
         result.append(temp)
     return result
 
+def RemoveHttp(str):
+    httpPattern = '[a-zA-z]+://[^\s]*'
+    return re.sub(httpPattern, ' ', str)
+
+def RemoveGit(str):
+    gitPattern = '[Gg]it-svn-id'
+    return re.sub(gitPattern, ' ', str)
+
+def clean_en_text(text):
+    # keep English, digital and space
+    comp = re.compile('[^A-Z^a-z^0-9^ ]')
+    return comp.sub(' ', text)
 
 def preprocessNoCamel(paragraph):
+    if not isinstance(paragraph, str):  # Ensure input is a string
+        return ""  # Or use str(paragraph) if you want to keep the data
     result = []
-    # encode_type = chardet.detect(paragraph)  
-    # paragraph = paragraph.encode(encode_type['encoding'])
+
+    # Remove text inside brackets
     paragraph = re.sub(r'(\[[\s\S]*?\])', '', paragraph, 0, re.I)
-    paragraph = re.sub(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', LINK_TAG, paragraph, 0, re.I)
+
+    # Remove URLs
+    paragraph = RemoveHttp(paragraph)
+
+    # Remove git-svn-id
+    paragraph = RemoveGit(paragraph)
+
+    # Replace inline code with a placeholder (CODE_TAG needs to be defined)
     paragraph = re.sub(r'`[\s\S]*?`', CODE_TAG, paragraph, 0, re.I)
+
+    # Tokenize sentences
     sentences = tokenizer.tokenize(paragraph)
+
     for sentence in sentences:
-        words = nltk.regexp_tokenize(sentence, pattern)
-        temp = []
-        for word in words:
-            if not isDelete(word.lower()) and len(word) > 1:
-                # temp.append(stemmer.stem(word.lower()))
-                temp.append(lemmatizer.lemmatize(word.lower()))
-        result.append(temp)
-    return result
+        sentence = clean_en_text(sentence)
+
+        word_tokens = word_tokenize(sentence)
+        word_tokens = [word for word in word_tokens if word.lower() not in stopwords.words('english')]
+        for word in word_tokens:
+            if word in stopwords.words('english'):
+                continue
+            else:
+                processed_word = lemmatizer.lemmatize(word) if lemmatizer.lemmatize(word).endswith('e') else stemmer.stem(word)
+                result.append(str(processed_word))
+    if len(result) == 0:
+        text = ' '
+    else:
+        text = ' '.join(result)
+
+    return text
 
 
 def processHTMLNoCamel(html):

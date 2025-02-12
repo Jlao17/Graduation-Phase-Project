@@ -1,7 +1,7 @@
 import pandas as pd
 import random
 
-repo = "HADOOP"
+repo = "ISIS"
 df = pd.read_csv(f"../data/Processed{repo.title()}/2_{repo.lower()}_link_merged.csv")
 
 df["target_rn"] = 1
@@ -11,8 +11,6 @@ false_rows = []
 release_notes_list = df["release_notes"].tolist()
 
 for index, row in df.iterrows():
-    if row["target"] == 0:
-        continue
     new_row = row.copy()
     current_release_note = row["release_notes"]
 

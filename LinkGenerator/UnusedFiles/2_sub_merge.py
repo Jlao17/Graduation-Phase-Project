@@ -18,8 +18,8 @@ res = res.drop("train_flag", axis=1)
 res.insert(len(res.columns), "train_flag", flag)
 
 # Apply filtering to Diff_processed to remove tokens <= 2 characters to reduce noise
-res["Diff_processed"] = df2["Diff_processed"].apply(
-    lambda x: [token for token in eval(x) if len(token) > 2] if pd.notna(x) else [])
+# res["Diff_processed"] = df2["Diff_processed"].apply(
+#     lambda x: [token for token in eval(x) if len(token) > 2] if pd.notna(x) else [])
 
 res = res.loc[:, ~res.columns.str.contains("Unnamed")]
 res.to_csv(f"../data/Processed{repo.title()}/2_{repo.lower()}_link_merged.csv")

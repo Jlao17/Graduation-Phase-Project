@@ -2,7 +2,7 @@ import csv
 import pandas as pd
 from tree_sitter import Language, Parser
 import tree_sitter_java as tsjava
-import preprocessor
+import LinkGenerator.preprocessor as preprocessor
 import ast
 import re
 
@@ -18,7 +18,7 @@ repo = "HADOOP"
 # Initialize an empty list to store processed data
 process = []
 # Load the CSV file containing the dataset
-dummy_link = pd.read_csv(f"../data/OriginalData/Hadoop/{repo.lower()}_link_raw_merged.csv")
+dummy_link = pd.read_csv(f"../../data/OriginalData/Hadoop/{repo.lower()}_link_raw_merged.csv")
 
 # Rename the column "commitid" to "hash"
 dummy_link.rename(columns={"commitid": "hash"}, inplace=True)
@@ -30,7 +30,12 @@ def remove_tracking_id(row):
     return re.sub(rf'\b{re.escape(tracking_id)}\b', '', text).strip()
 # Apply the function to remove tracking_id from text
 dummy_link['message'] = dummy_link.apply(remove_tracking_id, axis=1)
-
+# Alternative regular function to remove labels
+dummy_link["message"] = dummy_link["message"].apply(lambda x: re.sub(r'^\[?\s*\S+-\d+\s*]?\s*', '', str(x)))
+# Remove issue code from commit messages
+dummy_link["message"] = dummy_link["message"].apply(lambda x: re.sub(r'\(#\d+\)', '', str(x)).strip())
+# Remove Reviewed-by, Signed-off-by, and Contributed by from commit messages
+dummy_link["message"] = dummy_link["message"].apply(lambda x: re.sub(r'(Reviewed-by:.*|Signed-off-by:.*|Contributed by.*)', '', str(x), flags=re.IGNORECASE)).str.strip()
 # # Iterate through each row in the dataset
 for index, row in dummy_link.iterrows():
     # Preprocess the summary, description, and commit message
@@ -72,4 +77,4 @@ columns = [
 df = pd.DataFrame(process, columns=columns)
 
 # Release notes already added during scraping, so output is saved to 1.5_ instead of 1_ file
-df.to_csv(f"../data/Processed{repo.title()}/1.5_{repo.lower()}_process.csv", index=False)
+df.to_csv(f"../../data/Processed{repo.title()}/1.5_{repo.lower()}_process.csv", index=False)
