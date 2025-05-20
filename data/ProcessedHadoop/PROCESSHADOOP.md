@@ -1,4 +1,5 @@
 ## Run the files in the following order: 
+NOTE: Change the dataset name in the code snippets below to the dataset you are working with. \
 1. Scrape data from the Hadoop change logs, Jira and GitHub. \
 `LinkGenerator/HadoopScrape/scrape_hadoop_data.py`
 2. Process the commit and issue text. \

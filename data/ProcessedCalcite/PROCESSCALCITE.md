@@ -1,4 +1,5 @@
 ## Run the files in the following order for the created dataset:
+NOTE: Change the dataset name in the code snippets below to the dataset you are working with. \
 1. Process the commit and issue text. \
 `LinkGenerator/1_splitword.py` 
 2. Scrape release notes from the Calcite website. \
