@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
 stemmer = nltk.stem.SnowballStemmer('english')
-repo = "ISIS"
+repo = "HADOOP"
 # Define the repo and the specific commit hash you want
 # repo_path = "https://github.com/apache/calcite"  # Change to your repo path or  local directory
 df = pd.read_csv(f"../data/Processed{repo.title()}/2.5_{repo.lower()}_link_false_rn.csv")
@@ -38,5 +38,5 @@ tqdm.pandas()
 #         return word_tokens
 
 
-df['Diff_processed'] = df['Diff_processed'].progress_apply(preprocessor.preprocessNoCamel)
-df.to_csv(f"../data/Processed{repo.title()}/3_{repo.lower()}_link_final.csv", index=False)
+df['Diff_processed'] = df['Diff_processed'].progress_apply(preprocessor.processCode)
+df.to_csv(f"../data/Processed{repo.title()}/3_{repo.lower()}_link_final_diff_processed.csv", index=False)

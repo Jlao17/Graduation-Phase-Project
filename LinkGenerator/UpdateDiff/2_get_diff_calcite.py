@@ -77,8 +77,8 @@ for commit in tqdm(Repository(repo_path, only_commits=commit_hashes).traverse_co
 df["Diff_processed"] = df["hash"].map(structured_diffs)
 df.rename(columns={"label": "target"}, inplace=True)
 df['Diff_processed'] = df['Diff_processed'].apply(lambda x: str(x).replace("<", "").replace(">", ""))
-df = df[['issue_id', 'summary_processed', 'description_processed', 'issuecode', 'hash', 'fix_version', 'tracking_id',
- 'message_processed', 'changed_files', 'codelist_processed', 'release_notes', 'Diff_processed', 'train_flag',
- 'target']]
+df = df[['issue_id', 'summary_processed', 'description_processed', 'hash', 'fix_version', 'tracking_id',
+ 'message_processed', 'release_notes', 'Diff_processed', 'train_flag',
+ 'target', 'target_rn']]
 # Save the updated DataFrame back to CSV
 df.to_csv("../../data/ProcessedCalcite/2_calcite_link_merged.csv", index=False)

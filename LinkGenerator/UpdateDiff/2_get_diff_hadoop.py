@@ -15,9 +15,7 @@ structured_diffs = {}
 
 for commit in tqdm(Repository(repo_path, only_commits=commit_hashes).traverse_commits(), total=len(commit_hashes), desc="Processing commits - Total commits is not accurate, no fast way to get all specific commits from pydriller"):
     structured_diff = []
-
     for file in commit.modified_files:
-
         change_type = file.change_type.name  # "ADD", "DELETE", "MODIFY"
         # Remove < and > from the method names
         changed_methods = [method.name.split("::")[-1] for method in file.methods]
@@ -35,7 +33,6 @@ for commit in tqdm(Repository(repo_path, only_commits=commit_hashes).traverse_co
 df["Diff_processed"] = df["hash"].map(structured_diffs)
 df.rename(columns={"label": "target"}, inplace=True)
 df['Diff_processed'] = df['Diff_processed'].apply(lambda x: str(x).replace("<", "").replace(">", ""))
-df = df[['issue_id', 'summary_processed', 'description_processed', 'issuecode', 'hash', 'fix_version', 'tracking_id',
- 'message_processed', 'changed_files', 'codelist_processed', 'release_notes', 'Diff_processed', 'train_flag',
- 'target']]
+df = df[['issue_id', 'summary_processed', 'description_processed', 'hash', 'fix_version', 'tracking_id',
+ 'message_processed', 'release_notes', 'Diff_processed', 'train_flag', 'target', 'target_rn']]
 df.to_csv("../../data/ProcessedHadoop/2_hadoop_link_merged.csv", index=False)

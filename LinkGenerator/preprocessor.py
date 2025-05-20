@@ -373,6 +373,7 @@ def preprocessNoCamel(paragraph):
     if not isinstance(paragraph, str):  # Ensure input is a string
         return ""  # Or use str(paragraph) if you want to keep the data
     result = []
+    paragraph.lower()
 
     # Remove text inside brackets
     paragraph = re.sub(r'(\[[\s\S]*?\])', '', paragraph, 0, re.I)
@@ -384,7 +385,11 @@ def preprocessNoCamel(paragraph):
     paragraph = RemoveGit(paragraph)
 
     # Replace inline code with a placeholder (CODE_TAG needs to be defined)
-    paragraph = re.sub(r'`[\s\S]*?`', CODE_TAG, paragraph, 0, re.I)
+    paragraph = re.sub(r'\{code(?::[a-zA-Z0-9_+-]+)?\}(.*?)\{code\}', CODE_TAG, paragraph, 0, re.I)
+
+    # Remove usernames (e.g. @username and (Firstname Lastname))
+    paragraph = re.sub(r'@\w+', '', paragraph)
+    paragraph = re.sub(r'\([A-Za-z\s]+\)', '', paragraph)
 
     # Tokenize sentences
     sentences = tokenizer.tokenize(paragraph)
@@ -472,43 +477,16 @@ def processDiffCode(code):
     return result
 
 def processCode(code):
-    code = eval(code)
-    result = []
-    for c in code:
-        c = re.sub(r'(\"[\s\S]*?\")', '', c, 0, re.I)
-        c = re.sub(r'(@@[\s\S]*?\n)', '', c, 0, re.I)
-        c = re.sub(r'(-[\s\S]*?\n)', '', c, 0, re.I)   
-        mis = methodInvocationCase.findall(c)
-        for mi in mis:
-            miWords = mi.split('\.')
-            for miWord in miWords:
-                toDeal = []
-                if camelCase1.match(miWord) or camelCase2.match(miWord):
-                    toDeal = splitCode(miWord)
-                elif upperExtCase.match(miWord):
-                    toDeal = splitFinalExt(miWord)
-                elif upperCase.match(miWord):
-                    toDeal.append(miWord)
-                for deal in toDeal:
-                    if not isDelete(deal.lower()):
-                        result.append(lemmatizer.lemmatize(deal.lower()))
+    #   check if code is empty
+    if pd.isna(code):
+        return ''
 
-        code = re.sub(r'([A-Za-z0-9_]+\.[A-Za-z0-9_]+)', '', code, 0, re.I)
-        sentences = tokenizer.tokenize(code)
-        for sentence in sentences:
-            words = nltk.regexp_tokenize(sentence, pattern)
-            for word in words:
-                toDeal = []
-                if camelCase1.match(word) or camelCase2.match(word):
-                    toDeal = splitCode(word)
-                elif upperExtCase.match(word):
-                    toDeal = splitFinalExt(word)
-                elif upperCase.match(word):
-                    toDeal.append(word)
-                for deal in toDeal:
-                    if not isDelete(deal.lower()):
-                        result.append(lemmatizer.lemmatize(deal.lower()))
-    return result
+    # Step 1: Preserve the keywords 'MODIFY', 'ADD', 'DELETE' as tokens
+    code = re.sub(r'(MODIFY|ADD|DELETE)', r'[\1]', code)  # Wrap MODIFY, ADD, DELETE with square brackets
+    # code_processed = preprocessNoCamel(code)
+
+
+    return code
 
 def processPreDiffCode(code):
     code = re.sub(r'(\"[\s\S]*?\")', '', code, 0, re.I)

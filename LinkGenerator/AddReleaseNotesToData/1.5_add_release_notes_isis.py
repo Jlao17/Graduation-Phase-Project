@@ -61,8 +61,12 @@ if __name__ == "__main__":
                     release_notes_processed_cleaned = preprocessor.preprocessNoCamel(str(cleaned_release_notes).strip("[]"))
                     new_row["release_notes_original"] = note
                     new_row["release_notes"] = release_notes_processed_cleaned
+                    new_row["target_rn"] = 1
                     break
-
+                else:
+                    new_row["release_notes"] = "nan"
+                    new_row["release_notes_original"] = "nan"
+                    new_row["target_rn"] = 0
             expanded_rows.append(new_row)
 
     expanded_df = pd.DataFrame(expanded_rows)

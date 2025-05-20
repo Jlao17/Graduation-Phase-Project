@@ -43,20 +43,16 @@ for index, row in dummy_link.iterrows():
     summary_processed = preprocessor.preprocessNoCamel(str(row["summary"]).strip("[]"))
     description_processed = preprocessor.preprocessNoCamel(str(row["description"]).strip("[]"))
     message_processed = preprocessor.preprocessNoCamel(str(row["message"]).strip("[]"))
-    changed_files = []
-    codelist_processed = []
-    # Combine summary, description, and comment to process issue code
-    issue_text = str(row["summary"]) + str(row["description"]) + str(row["comment"])
-    issuecode = preprocessor.getIssueCode(issue_text)
+    release_notes_processed = preprocessor.preprocessNoCamel(str(row["release_notes_original"]).strip("[]"))
+
+
 
     # Prepare the list for the current row, including the fix_version
     list1 = [
-        row["source"], row["product"], row["issue_id"], row["component"],
-        row["create_date"], row["update_date"], row["last_resolved_date"], summary_processed,
-        description_processed, issuecode, row["issue_type"], row["status"], row["repo"], row["hash"], row["fix_version"],
-        row["parents"], row["author"], row["committer"], row["author_time_date"], row["commit_time_date"], row["tracking_id"],
-        message_processed, row["commit_issue_id"], changed_files, None, codelist_processed, row["label"],
-        row["train_flag"], row["release_notes_original"], row["release_notes"]
+        row["source"], row["product"], row["issue_id"], row["component"], summary_processed,
+        description_processed, row["repo"], row["hash"], row["fix_version"], row["tracking_id"],
+        message_processed, None, row["label"],
+        row["train_flag"], row["release_notes_original"], release_notes_processed, 1
     ]
 
     # Append the processed row to the process list
@@ -66,11 +62,9 @@ for index, row in dummy_link.iterrows():
     print(f"Processed row {index + 1}/{len(dummy_link)}")
 
 columns = [
-    "source", "product", "issue_id", "component", "create_date", "update_date",
-    "last_resolved_date", "summary_processed", "description_processed", "issuecode", "issue_type",
-    "status", "repo", "hash", "fix_version", "parents", "author", "committer", "author_time_date", "commit_time_date",
-    "tracking_id", "message_processed", "commit_issue_id", "changed_files", "Diff_processed", "codelist_processed",
-    "label", "train_flag", "release_notes_original", "release_notes"
+    "source", "product", "issue_id", "component", "summary_processed", "description_processed",  "repo", "hash", "fix_version",
+    "tracking_id", "message_processed", "Diff_processed",
+    "label", "train_flag", "release_notes_original", "release_notes", "target_rn"
 ]
 
 # Create a DataFrame from the processed data
