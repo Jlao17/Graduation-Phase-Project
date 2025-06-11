@@ -4,3 +4,6 @@ Code based on the paper [``BTLink : automatic link recovery between issues and c
 Data can be found at: _TODO: upload link to drive and add link._
 
 The steps to preprocess each dataset can be found in ``data/Processed<dataset name>`` for each respective dataset.
+
+Add your own Github token as a constant in constants.py or set the variable `GITHUB_TOKEN` to your token where it is used in the code.
+This token is used to access the Github API to fetch issues and commits.
