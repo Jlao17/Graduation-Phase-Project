@@ -21,6 +21,9 @@ import transformers
 
 from models.utils import IssueCommitReleaseDataset
 
+"""
+Combine datasets functions
+"""
 #
 # df = pd.read_csv("data/OriginalData/Giraph/Giraph_DEV.csv")
 # for index, row in df.iterrows():
@@ -70,9 +73,10 @@ from models.utils import IssueCommitReleaseDataset
 
 
 
+"""
+Find value counts of `target_rn` for each dataset
+"""
 
-
-#Remove all rows with target=0
 # df_hadoop_fix = df6_pre[df6_pre["target"] == 1]
 # df_hadoop_fix.to_csv("data/ProcessedHadoop/2_hadoop_link_merged.csv")
 # print(df6["target_rn"].value_counts())
@@ -82,6 +86,9 @@ from models.utils import IssueCommitReleaseDataset
 # print(df2["target_rn"].value_counts())
 
 
+"""
+Read release notes and count the number of release notes
+"""
 # rl = pd.read_csv("data/ReleaseNotes/Calcite/release_notes_calcite.csv")
 # rl2 = pd.read_csv("data/ReleaseNotes/Calcite/release_notes_calcite_avatica.csv")
 # rl3 = pd.read_csv("data/ReleaseNotes/Calcite/release_notes_calcite_avatica_go.csv")
@@ -104,7 +111,9 @@ from models.utils import IssueCommitReleaseDataset
 #     count = len(ast.literal_eval(row["content"]))
 #     total_rl += count
 
-#
+"""
+Print number of unique entries for each dataset
+"""
 # df = pd.read_csv("data/OriginalData/calcite_link_raw.csv")
 # # df_isis = pd.read_csv("data/OriginalData/isis_link_raw.csv")
 # df_hadoop = pd.read_csv("data/OriginalData/Hadoop/hadoop_link_raw_merged.csv")
