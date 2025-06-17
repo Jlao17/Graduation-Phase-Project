@@ -19,7 +19,7 @@ import seaborn as sns
 import numpy as np
 import transformers
 
-from models.utils import IssueCommitReleaseDataset
+from models.train_test_utils import IssueCommitReleaseDataset
 
 """
 Combine datasets functions
