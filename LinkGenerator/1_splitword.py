@@ -20,7 +20,6 @@ parser = Parser(LANGUAGE)
 repo = "NETBEANS"
 # Initialize an empty list to store processed data
 process = []
-# Cloned repo path for fetching commit messages
 # Load the CSV file containing the dataset
 dummy_link = pd.read_csv(f"../data/OriginalData/{repo.lower()}_link_raw.csv")
 JIRA_API = "https://issues.apache.org/jira/rest/api/2/issue/"
