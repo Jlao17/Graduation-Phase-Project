@@ -39,7 +39,7 @@ def extract_jira_issue_key(commit_message, repo):
         raise ValueError("No JIRA issue key found in the commit message")
 
 
-def get_fix_versions_from_jira(repo_name, hash, commit_message, repo):
+def get_fix_versions_from_jira(commit_message, repo):
     # if cloned:
     #     commit_message = get_title_from_cloned_repo(repo_name, hash)
     # else:
