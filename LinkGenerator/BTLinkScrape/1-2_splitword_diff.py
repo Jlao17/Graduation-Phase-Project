@@ -17,7 +17,7 @@ repo = "GIRAPH"
 # Initialize an empty list to store processed data
 process = []
 # Cloned repo path for fetching commit messages
-cloned_repo_path = f"C:/Users/Jason/Desktop/{repo.lower()} repo/{repo.lower()}"
+cloned_repo_path = "Clone and insert path to Giraph/Tika project"
 # Load the CSV file containing the dataset
 dummy_link = pd.read_csv(f"../../data/OriginalData/{repo.title()}/{repo.lower()}_link_raw_merged_test.csv")
 release_notes = pd.read_csv(f"../../data/ReleaseNotes/{repo.title()}/release_notes_{repo.lower()}.csv")
