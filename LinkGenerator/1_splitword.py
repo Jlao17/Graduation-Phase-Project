@@ -21,7 +21,6 @@ repo = "NETBEANS"
 # Initialize an empty list to store processed data
 process = []
 # Cloned repo path for fetching commit messages
-cloned_repo_path = f"C:/Users/Jason/Desktop/{repo.lower()} repo/{repo.lower()}"
 # Load the CSV file containing the dataset
 dummy_link = pd.read_csv(f"../data/OriginalData/{repo.lower()}_link_raw.csv")
 JIRA_API = "https://issues.apache.org/jira/rest/api/2/issue/"
@@ -58,7 +57,7 @@ for index, row in dummy_link.iterrows():
     message_processed = preprocessor.preprocessNoCamel(str(row["message"]).strip("[]"))
 
     # Fetch the fix version for the current commit hash using the `get_fix_versions_from_jira` function
-    fix_version = get_fix_versions_from_jira(cloned_repo_path, row["hash"], row["old_message"], repo)
+    fix_version = get_fix_versions_from_jira(row["old_message"], repo)
     # Combine summary, description, and comment to process issue code
 
     # Prepare the list for the current row, including the fix_version
