@@ -1,6 +1,5 @@
 ## Run the files in the following order for the created dataset:
 NOTE: Change the dataset name in the code snippets below to the dataset you are working with. \
-NOTE 2: The original project files are needed to retrieve commit information. Clone Giraph and add the path to `1-2_splitword_diff.py` \
 1. Add issue attributes to the Giraph dataset and combine the data. \
 `LinkGenerator/BTLinkScrape/0_add_issue_attributes.py` 
 2. Scrape release notes from the Giraph txt file. \
